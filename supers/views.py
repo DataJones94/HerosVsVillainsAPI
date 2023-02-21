@@ -1,3 +1,27 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Super
+from .serializers import SuperSerializer
 
-# Create your views here.
+@api_view(['GET', 'POST'])
+def supers_list(request):
+    if request.method == 'GET':
+        # dealership_name = request.query_params.get('dealership')
+        # print(dealership_name)
+
+        queryset = Super.objects.all()
+
+        # if dealership_name:
+        #     queryset = queryset.filter(dealership__name= dealership_name)
+
+        serializer = SuperSerializer(queryset, many=True)    
+        return Response(serializer.data)
+
+
+    elif request.method == 'POST':
+        serializer = SuperSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
