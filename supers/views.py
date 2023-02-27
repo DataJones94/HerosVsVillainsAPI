@@ -8,13 +8,16 @@ from .serializers import SuperSerializer
 @api_view(['GET', 'POST'])
 def supers_list(request):
     if request.method == 'GET':
-        # dealership_name = request.query_params.get('dealership')
-        # print(dealership_name)
+        s_type = request.query_params.get('type')
+        s_name = request.query_params.get('name')
+
 
         queryset = Super.objects.all()
 
-        # if dealership_name:
-        #     queryset = queryset.filter(dealership__name= dealership_name)
+        if s_type:
+            queryset = queryset.filter(super_type__type= s_type)
+        if s_name:
+            queryset = queryset.filter(name=s_name)    
 
         serializer = SuperSerializer(queryset, many=True)    
         return Response(serializer.data)
